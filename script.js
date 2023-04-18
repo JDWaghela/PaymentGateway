@@ -206,4 +206,105 @@ window.onload = function () {
   generatecard.addEventListener("click", function () {
     randomCard();
   });
+  /* 
+  // CREDIT CARD IMAGE JS
+  document.querySelector(".preload").classList.remove("preload");
+  document.querySelector(".creditcard").addEventListener("click", function () {
+    if (this.classList.contains("flipped")) {
+      this.classList.remove("flipped");
+    } else {
+      this.classList.add("flipped");
+    }
+  });
+
+  //On Input Change Events
+  name.addEventListener("input", function () {
+    if (name.value.length == 0) {
+      document.getElementById("svgname").innerHTML = "John Doe";
+      document.getElementById("svgnameback").innerHTML = "John Doe";
+    } else {
+      document.getElementById("svgname").innerHTML = this.value;
+      document.getElementById("svgnameback").innerHTML = this.value;
+    }
+  });
+
+  cardnumber_mask.on("accept", function () {
+    if (cardnumber_mask.value.length == 0) {
+      document.getElementById("svgnumber").innerHTML = "0123 4567 8910 1112";
+    } else {
+      document.getElementById("svgnumber").innerHTML = cardnumber_mask.value;
+    }
+  });
+
+  expirationdate_mask.on("accept", function () {
+    if (expirationdate_mask.value.length == 0) {
+      document.getElementById("svgexpire").innerHTML = "01/23";
+    } else {
+      document.getElementById("svgexpire").innerHTML =
+        expirationdate_mask.value;
+    }
+  });
+
+  securitycode_mask.on("accept", function () {
+    if (securitycode_mask.value.length == 0) {
+      document.getElementById("svgsecurity").innerHTML = "985";
+    } else {
+      document.getElementById("svgsecurity").innerHTML =
+        securitycode_mask.value;
+    }
+  });
+
+  //On Focus Events
+  name.addEventListener("focus", function () {
+    document.querySelector(".creditcard").classList.remove("flipped");
+  });
+
+  cardnumber.addEventListener("focus", function () {
+    document.querySelector(".creditcard").classList.remove("flipped");
+  });
+
+  expirationdate.addEventListener("focus", function () {
+    document.querySelector(".creditcard").classList.remove("flipped");
+  });
+
+  securitycode.addEventListener("focus", function () {
+    document.querySelector(".creditcard").classList.add("flipped");
+  });
+ */
+};
+
+const initiateWebView = function (data) {
+  const name = document.getElementById("name");
+  try {
+    const jsonData = JSON.parse(data); // In jsonData all order related details will come
+
+    name.value = jsonData.cardName; // ignore this line this is for demo purpose
+  } catch (error) {}
+};
+
+const onSubmitPayment = function () {
+  /* 
+   Validation on every required input fields with necessary error message before other action starts
+   You can return any validation field failed status and message.
+  */
+
+  // To start loading
+  postMessage({ eventName: "loading", eventData: true });
+
+  // Operation which will perform place order till 3 seconds
+  setTimeout(() => {
+    // To stop loading
+    postMessage({ eventName: "loading", eventData: false });
+
+    // Final Data after success or failure operation
+    postMessage({
+      eventName: "result",
+      eventData: { success: true, message: "Success message" },
+    });
+  }, 3000);
+};
+
+const postMessage = function (data) {
+  if (window?.ReactNativeWebView)
+    window?.ReactNativeWebView?.postMessage(JSON.stringify(data));
 };
