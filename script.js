@@ -288,14 +288,8 @@ const onSubmitPayment = function () {
    You can return any validation field failed status and message.
   */
 
-  // To start loading
-  postMessage({ eventName: "loading", eventData: true });
-
   // Operation which will perform place order till 3 seconds
   setTimeout(() => {
-    // To stop loading
-    postMessage({ eventName: "loading", eventData: false });
-
     // Final Data after success or failure operation
     postMessage({
       eventName: "result",
