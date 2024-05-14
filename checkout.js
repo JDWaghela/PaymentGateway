@@ -2,15 +2,15 @@ let elements;
 let stripe;
 
 // initialize(
-//   "Bearer eyJraWQiOiJ0aFdTQmdyR0lzVERnaXlVMnQxSk8wZW9oREotS3hzaDBpMkMxdVBWdk5VIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmpiMG9SY0ZfN1A1WTJ2aUdWVVVocXN6c0JCM2w0TjJ6Q0ZWdkUzLTd4Vkkub2FyMm9ncmpueXRSY1p0dXowaDciLCJpc3MiOiJodHRwczovL3BlcHNpY28ub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTcxNTY3MjkyMSwiZXhwIjoxNzE1Njc2NTIxLCJjaWQiOiIwb2ExNjI3eDM4cjB5cGdNSzBoOCIsInVpZCI6IjAwdTIyMHVtbWlsVU1Nc2w0MGg4Iiwic2NwIjpbInByb2ZpbGUiLCJvZmZsaW5lX2FjY2VzcyIsIm9wZW5pZCJdLCJhdXRoX3RpbWUiOjE3MTU2NzI5MTksInN1YiI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20iLCJlbWFpbCI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20ifQ.WUlmvLk6cb7nyxNaMxgVRsJSvEZWyMxx3pQO7ifU5SBhFMHWUnYbcCEYBa1qiocI2-5qjL5UR4PUcxWLMzDmRhipBL8uv5k6QRgpqc7WWkkQAap6aSzcwcbc1QgIeuqY6WTBDzirU1DJENrvcLqGpordn7OYy5fkxPcqDCXzuuI9iFx517qCqVoDa2IGZRH8aPpZoq8XQMGIak4K3vzGKs6A4fO46QAnhwdIElbTsrbnK3-13tFWfv7h6qLtH82K8OE-rlS7oDF8ZI0rbELQfbz7UfatnZDbglZe4EQve_8uzfRnaumjg9E0s7U1NS9QvPZ8YaaopmRxDgxy4DNCQw",
-//   "pep-12345",
+//   "Bearer eyJraWQiOiJ0aFdTQmdyR0lzVERnaXlVMnQxSk8wZW9oREotS3hzaDBpMkMxdVBWdk5VIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULlhDZWFsUTFXbnRaQTU1UzM1TmhnaDF6NFR0clR5V1BVVUNDZFNFQk16bTAub2FyMm9oYTV1dkVkUDBYa2kwaDciLCJpc3MiOiJodHRwczovL3BlcHNpY28ub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTcxNTY4OTM1NCwiZXhwIjoxNzE1NjkyOTU0LCJjaWQiOiIwb2ExNjI3eDM4cjB5cGdNSzBoOCIsInVpZCI6IjAwdTIyMHVtbWlsVU1Nc2w0MGg4Iiwic2NwIjpbIm9mZmxpbmVfYWNjZXNzIiwicHJvZmlsZSIsIm9wZW5pZCJdLCJhdXRoX3RpbWUiOjE3MTU2ODkzNTMsInN1YiI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20iLCJlbWFpbCI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20ifQ.koDhv4CzS-2n_cBHzuc50cItMFAKXchfFZM6iBDFOmrVmYcg5w8__tScqS7xMvzFHjnP-2e0itTNBG_p9YaGtWnH8JgFn5sw6bUGPTUvaZi8KYPBmBgKgATu3etXNBBZJMwB0nBGrYy-AxsNMujSvk7sV_1JCWQRMNjZ59R-I6jPnQABd2V0oGgc72s9b_2wpqWDUZIzFqZoJ5-UD0IGSVJYxEUb98IByq34CjemKq4VM9bHANwvjN1YDwQwVmOgoHhHhb-q8cJ5WMleaF5bcLx_W4NUmasTgOMy2uID4JRCREHfyWWEr0nEkO-PPEo8jzhqx6IiN0u2t_PE2Gg12Q",
+//   "01111232323",
 //   "accordion",
 //   false
 // );
 
 // initStripe(
 //   "pk_test_51OoobQIhoMYCIMJxfjMZbjAVCicWGVevZPZpVVgdj0mzPkoJdRjL4gwizPOgpyflDPk78YNBuevOUZSS3egQy5AM00fluM6aqb",
-//   "cuss_secret_Q6S9k2fDAioa5UqNy67Krr3XurMQw5zGAvOXGB4ElFFqsIp",
+//   "cuss_secret_Q6XpETt1zDbGWvW4VmdVUa6g6TBp4YEMdjvM7ZORWEXoPaR",
 //   "accordion"
 // );
 
@@ -41,7 +41,7 @@ async function initialize(token, customerKey, layoutType, nativeAPI) {
   window.authorization = token;
   window.nativeAPI = nativeAPI;
 
-  postMessage({
+  reactNativePostMessage({
     eventName: "initialize",
     eventData: { token, customerKey, layoutType, nativeAPI },
   });
@@ -51,7 +51,7 @@ async function initialize(token, customerKey, layoutType, nativeAPI) {
     method: "GET",
   });
 
-  postMessage({ eventName: "config", eventData: configResponse });
+  reactNativePostMessage({ eventName: "config", eventData: configResponse });
 
   const { publishableKey, error_msg } = configResponse;
 
@@ -65,7 +65,10 @@ async function initialize(token, customerKey, layoutType, nativeAPI) {
     body: JSON.stringify({ customerId: encodeURIComponent(customerKey) }),
   });
 
-  postMessage({ eventName: "customer", eventData: customerResponse });
+  reactNativePostMessage({
+    eventName: "customer",
+    eventData: customerResponse,
+  });
 
   const { clientSecret } = customerResponse;
 
@@ -73,7 +76,7 @@ async function initialize(token, customerKey, layoutType, nativeAPI) {
 }
 
 function initStripe(publishableKey, clientSecret, layoutType) {
-  postMessage({
+  reactNativePostMessage({
     eventName: "initStripe",
     eventData: { publishableKey, clientSecret, layoutType },
   });
@@ -164,7 +167,10 @@ async function handleSubmit(e) {
   if (error) {
     // This point is only reached if there's an immediate error when
     // creating the ConfirmationToken. Show the error to your customer (for example, payment details incomplete)
-    postMessage({ eventName: "stripe.confirmationToken", eventData: error });
+    reactNativePostMessage({
+      eventName: "stripe.confirmationToken",
+      eventData: error,
+    });
     setLoading(false);
     return;
   }
@@ -181,7 +187,7 @@ async function handleConfirm() {
   confirmationToken = window.confirmationToken;
 
   if (window.nativeAPI) {
-    postMessage({
+    reactNativePostMessage({
       eventName: "confirm",
       eventData: { id: confirmationToken.id },
     });
@@ -296,7 +302,7 @@ function setLoading(isLoading) {
   }
 }
 
-function postMessage(postData) {
+function reactNativePostMessage(postData) {
   /* Storing user's device details in a variable*/
   let details = navigator.userAgent;
 
