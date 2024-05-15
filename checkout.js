@@ -163,7 +163,16 @@ async function handleSubmit(e) {
 
   const { error, confirmationToken } = await stripe.createConfirmationToken({
     elements,
-    params: {},
+    params: {
+      payment_method_data: {
+        billing_details: {
+          address: {
+            country: null,
+            postal_code: null,
+          },
+        },
+      },
+    },
   });
 
   if (error) {
@@ -179,7 +188,7 @@ async function handleSubmit(e) {
 
   window.confirmationToken = confirmationToken;
 
-  showSummary(JSON.stringify(confirmationToken, null, 2));
+  showSummary(JSON.stringify(confirmationToken));
   setLoading(false);
   document.querySelector("#submit").classList.add("hidden");
   document.querySelector("#confirm").classList.remove("hidden");
