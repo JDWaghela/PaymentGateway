@@ -2,7 +2,7 @@ let elements;
 let stripe;
 
 // initialize(
-//   "Bearer eyJraWQiOiJ0aFdTQmdyR0lzVERnaXlVMnQxSk8wZW9oREotS3hzaDBpMkMxdVBWdk5VIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULlhDZWFsUTFXbnRaQTU1UzM1TmhnaDF6NFR0clR5V1BVVUNDZFNFQk16bTAub2FyMm9oYTV1dkVkUDBYa2kwaDciLCJpc3MiOiJodHRwczovL3BlcHNpY28ub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTcxNTY4OTM1NCwiZXhwIjoxNzE1NjkyOTU0LCJjaWQiOiIwb2ExNjI3eDM4cjB5cGdNSzBoOCIsInVpZCI6IjAwdTIyMHVtbWlsVU1Nc2w0MGg4Iiwic2NwIjpbIm9mZmxpbmVfYWNjZXNzIiwicHJvZmlsZSIsIm9wZW5pZCJdLCJhdXRoX3RpbWUiOjE3MTU2ODkzNTMsInN1YiI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20iLCJlbWFpbCI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20ifQ.koDhv4CzS-2n_cBHzuc50cItMFAKXchfFZM6iBDFOmrVmYcg5w8__tScqS7xMvzFHjnP-2e0itTNBG_p9YaGtWnH8JgFn5sw6bUGPTUvaZi8KYPBmBgKgATu3etXNBBZJMwB0nBGrYy-AxsNMujSvk7sV_1JCWQRMNjZ59R-I6jPnQABd2V0oGgc72s9b_2wpqWDUZIzFqZoJ5-UD0IGSVJYxEUb98IByq34CjemKq4VM9bHANwvjN1YDwQwVmOgoHhHhb-q8cJ5WMleaF5bcLx_W4NUmasTgOMy2uID4JRCREHfyWWEr0nEkO-PPEo8jzhqx6IiN0u2t_PE2Gg12Q",
+//   "Bearer eyJraWQiOiJ0aFdTQmdyR0lzVERnaXlVMnQxSk8wZW9oREotS3hzaDBpMkMxdVBWdk5VIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULnR5bVkwb2x0Um9UX3NuNm11cFNBV0ZXei1mSXpoSXZQWWptdnZkdFpmeTgub2FyMm9sNWQ0MWhDZ2J6RjIwaDciLCJpc3MiOiJodHRwczovL3BlcHNpY28ub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTcxNTc1MTU0OSwiZXhwIjoxNzE1NzU1MTQ5LCJjaWQiOiIwb2ExNjI3eDM4cjB5cGdNSzBoOCIsInVpZCI6IjAwdTIyMHVtbWlsVU1Nc2w0MGg4Iiwic2NwIjpbIm9mZmxpbmVfYWNjZXNzIiwib3BlbmlkIiwicHJvZmlsZSJdLCJhdXRoX3RpbWUiOjE3MTU3NTE1NDcsInN1YiI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20iLCJlbWFpbCI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20ifQ.eL1DFM3HZi0drOtDWqzy164F5Duz6Uzw4RPqrv3yqVQTObvf72l-UtVi_EGpcpMf-pi9pC4xcpVBi5I5jY-OwqBWe5pk9DjLoRdKMxj6irxmnmyiwjA1jIt3TarSPUwR7LiY6X5yE4W-8aZquzdIYQYTe8wGFN8zC-nBFxQEbfb62zroEut9PUj1wX1EcOknEWrwFwEtpKU0idd-mXo_QjiRxujkpzrLxEJha5CEXWyghMA1sZAC4E1PlGuzTKSOkujWYJPg7EblctJWw__88C7j988QpJAEyF0vKWSu_uySs9WH5I6nTBxYUDB_XV7mZnIqMCOLOlAALRlU8la--g",
 //   "01111232323",
 //   "accordion",
 //   false
@@ -39,7 +39,6 @@ async function callAPI({ url, method, body }) {
 // Fetches a payment intent and captures the client secret
 async function initialize(token, customerKey, layoutType, nativeAPI) {
   window.authorization = token;
-  window.nativeAPI = nativeAPI;
 
   reactNativePostMessage({
     eventName: "initialize",
@@ -72,13 +71,15 @@ async function initialize(token, customerKey, layoutType, nativeAPI) {
 
   const { clientSecret } = customerResponse;
 
-  initStripe(publishableKey, clientSecret, layoutType);
+  initStripe(publishableKey, clientSecret, layoutType, nativeAPI);
 }
 
-function initStripe(publishableKey, clientSecret, layoutType) {
+function initStripe(publishableKey, clientSecret, layoutType, nativeAPI) {
+  window.nativeAPI = nativeAPI;
+
   reactNativePostMessage({
     eventName: "initStripe",
-    eventData: { publishableKey, clientSecret, layoutType },
+    eventData: { publishableKey, clientSecret, layoutType, nativeAPI },
   });
 
   stripe = Stripe(publishableKey, {
@@ -188,7 +189,7 @@ async function handleConfirm() {
 
   if (window.nativeAPI) {
     reactNativePostMessage({
-      eventName: "confirm",
+      eventName: "stripe.confirmationToken",
       eventData: { id: confirmationToken.id },
     });
   } else {
@@ -237,7 +238,6 @@ async function checkStatus(paymentResponse) {
     case "requires_capture":
       showSummary(JSON.stringify(paymentResponse));
       document.getElementById("confirm").classList.add("hidden");
-      document.getElementById("link-checkout").classList.remove("hidden");
       showMessage("Payment succeeded!");
       break;
     case "succeeded":
