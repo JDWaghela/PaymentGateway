@@ -143,6 +143,7 @@ function initStripe(publishableKey, clientSecret, layoutType, nativeAPI) {
   paymentElement.on("ready", () => {
     document.querySelector("#submit").classList.remove("hidden");
   });
+  setLoading(false);
 }
 
 async function handleSubmit(e) {
@@ -178,7 +179,7 @@ async function handleSubmit(e) {
 
   window.confirmationToken = confirmationToken;
 
-  showSummary(JSON.stringify(confirmationToken));
+  showSummary(JSON.stringify(confirmationToken, null, 2));
   setLoading(false);
   document.querySelector("#submit").classList.add("hidden");
   document.querySelector("#confirm").classList.remove("hidden");
@@ -214,27 +215,25 @@ async function handleConfirm() {
 }
 
 function handleConfirmResponse(checkoutResponse) {
+  setLoading(false);
   try {
     const paymentResponse =
       typeof checkoutResponse === "string"
         ? JSON.parse(checkoutResponse)
         : checkoutResponse;
     checkStatus(paymentResponse);
-    setLoading(false);
-  } catch (error) {
-    setLoading(false);
-  }
+  } catch (_error) {}
 }
 
 // Fetches the payment intent status after payment submission
 async function checkStatus(paymentResponse) {
-  const clientSecret = paymentResponse.clientSecret;
+  const clientSecret = paymentResponse?.clientSecret;
 
   if (!clientSecret) {
     return;
   }
 
-  switch (paymentResponse.status) {
+  switch (paymentResponse?.status) {
     case "requires_capture":
       showSummary(JSON.stringify(paymentResponse));
       document.getElementById("confirm").classList.add("hidden");
@@ -284,6 +283,11 @@ function showSummary(last4digits) {
 
 // Show a spinner on payment submission
 function setLoading(isLoading) {
+  reactNativePostMessage({
+    eventName: "stripe.isLoading",
+    eventData: isLoading,
+  });
+
   if (isLoading) {
     // Disable the button and show a spinner
     document.querySelector("#submit").disabled = true;
