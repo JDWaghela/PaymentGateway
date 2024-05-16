@@ -1,18 +1,22 @@
 let elements;
 let stripe;
 
-// initialize(
-//   "Bearer eyJraWQiOiJ0aFdTQmdyR0lzVERnaXlVMnQxSk8wZW9oREotS3hzaDBpMkMxdVBWdk5VIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULnR5bVkwb2x0Um9UX3NuNm11cFNBV0ZXei1mSXpoSXZQWWptdnZkdFpmeTgub2FyMm9sNWQ0MWhDZ2J6RjIwaDciLCJpc3MiOiJodHRwczovL3BlcHNpY28ub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTcxNTc1MTU0OSwiZXhwIjoxNzE1NzU1MTQ5LCJjaWQiOiIwb2ExNjI3eDM4cjB5cGdNSzBoOCIsInVpZCI6IjAwdTIyMHVtbWlsVU1Nc2w0MGg4Iiwic2NwIjpbIm9mZmxpbmVfYWNjZXNzIiwib3BlbmlkIiwicHJvZmlsZSJdLCJhdXRoX3RpbWUiOjE3MTU3NTE1NDcsInN1YiI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20iLCJlbWFpbCI6ImNlcDE3LTAxMTExMjMyMzIzQHBlcHNpY29ubmVjdC5jb20ifQ.eL1DFM3HZi0drOtDWqzy164F5Duz6Uzw4RPqrv3yqVQTObvf72l-UtVi_EGpcpMf-pi9pC4xcpVBi5I5jY-OwqBWe5pk9DjLoRdKMxj6irxmnmyiwjA1jIt3TarSPUwR7LiY6X5yE4W-8aZquzdIYQYTe8wGFN8zC-nBFxQEbfb62zroEut9PUj1wX1EcOknEWrwFwEtpKU0idd-mXo_QjiRxujkpzrLxEJha5CEXWyghMA1sZAC4E1PlGuzTKSOkujWYJPg7EblctJWw__88C7j988QpJAEyF0vKWSu_uySs9WH5I6nTBxYUDB_XV7mZnIqMCOLOlAALRlU8la--g",
-//   "01111232323",
-//   "accordion",
-//   false
-// );
+// initialize({
+//   token: "",
+//   customerKey: "",
+//   locale: "en",
+//   amount: 2500,
+//   currency: "usd",
+// });
 
-// initStripe(
-//   "pk_test_51OoobQIhoMYCIMJxfjMZbjAVCicWGVevZPZpVVgdj0mzPkoJdRjL4gwizPOgpyflDPk78YNBuevOUZSS3egQy5AM00fluM6aqb",
-//   "cuss_secret_Q6XpETt1zDbGWvW4VmdVUa6g6TBp4YEMdjvM7ZORWEXoPaR",
-//   "accordion"
-// );
+// initStripe({
+//   publishableKey: "",
+//   clientSecret: "",
+//   nativeAPI: false,
+//   locale: "en",
+//   amount: 2500,
+//   currency: "usd",
+// });
 
 document
   .querySelector("#payment-form")
