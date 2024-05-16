@@ -243,7 +243,7 @@ async function handleConfirm() {
   if (window.nativeAPI) {
     reactNativePostMessage({
       eventName: "stripe.confirmationToken",
-      eventData: { confirmationToken },
+      eventData: { confirmationToken: window.confirmationToken },
     });
   } else {
     //TODO Call checkout to create paymentIntent and return client secret
