@@ -92,6 +92,7 @@ function initStripe({
   nativeAPI = true,
   amount,
   currency,
+  showWebButtons = true,
 }) {
   window.nativeAPI = nativeAPI;
 
@@ -112,7 +113,23 @@ function initStripe({
     locale,
   });
 
+  const appearance = {
+    theme: "stripe",
+
+    variables: {
+      // colorPrimary: "#0570de",
+      // colorBackground: "#F3F5F6",
+      // colorText: "#30313d",
+      // colorDanger: "#df1b41",
+      // fontFamily: "Ideal Sans, system-ui, sans-serif",
+      // spacingUnit: "2px",
+      // borderRadius: "4px",
+      // See all possible variables below
+    },
+  };
+
   const options = {
+    appearance,
     customerSessionClientSecret: clientSecret,
     mode: "payment",
     amount: amount,
@@ -143,7 +160,7 @@ function initStripe({
     layout: {
       type: "accordion",
       defaultCollapsed: false,
-      radios: true,
+      radios: false,
       spacedAccordionItems: false,
     },
     paymentMethodOrder: ["card"],
@@ -152,10 +169,12 @@ function initStripe({
   const paymentElement = elements.create("payment", paymentElementOptions);
   paymentElement.mount("#payment-element");
   paymentElement.on("ready", () => {
-    document
-      .querySelector("#payment-collection-notice")
-      .classList.remove("hidden");
-    document.querySelector("#submit").classList.remove("hidden");
+    if (showWebButtons) {
+      document
+        .querySelector("#payment-collection-notice")
+        .classList.remove("hidden");
+      document.querySelector("#submit").classList.remove("hidden");
+    }
   });
   setLoading(false);
 }
@@ -222,7 +241,7 @@ async function handleSubmit(e) {
     // creating the ConfirmationToken. Show the error to your customer (for example, payment details incomplete)
     reactNativePostMessage({
       eventName: "stripe.confirmationToken",
-      eventData: error,
+      eventData: { error },
     });
     setLoading(false);
     return;
