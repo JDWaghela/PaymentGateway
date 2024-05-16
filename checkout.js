@@ -37,18 +37,12 @@ async function callAPI({ url, method, body }) {
 }
 
 // Fetches a payment intent and captures the client secret
-async function initialize({
-  token,
-  customerKey,
-  layoutType,
-  nativeAPI,
-  locale,
-}) {
+async function initialize({ token, customerKey, locale, amount, currency }) {
   window.authorization = token;
 
   reactNativePostMessage({
     eventName: "initialize",
-    eventData: { token, customerKey, layoutType, nativeAPI, locale },
+    eventData: { token, customerKey, locale, amount, currency },
   });
 
   const configResponse = await callAPI({
@@ -77,21 +71,36 @@ async function initialize({
 
   const { clientSecret } = customerResponse;
 
-  initStripe({ publishableKey, clientSecret, layoutType, nativeAPI, locale });
+  initStripe({
+    publishableKey,
+    clientSecret,
+    nativeAPI: false,
+    locale,
+    amount,
+    currency,
+  });
 }
 
 function initStripe({
   publishableKey,
   clientSecret,
-  layoutType,
-  nativeAPI,
   locale,
+  nativeAPI = true,
+  amount,
+  currency,
 }) {
   window.nativeAPI = nativeAPI;
 
   reactNativePostMessage({
     eventName: "initStripe",
-    eventData: { publishableKey, clientSecret, layoutType, nativeAPI, locale },
+    eventData: {
+      publishableKey,
+      clientSecret,
+      nativeAPI,
+      locale,
+      amount,
+      currency,
+    },
   });
 
   stripe = Stripe(publishableKey, {
@@ -102,8 +111,8 @@ function initStripe({
   const options = {
     customerSessionClientSecret: clientSecret,
     mode: "payment",
-    amount: 2500,
-    currency: "usd",
+    amount: amount,
+    currency: currency,
     payment_method_types: ["card"],
     captureMethod: "manual",
     paymentMethodCreation: "manual",
@@ -134,22 +143,15 @@ function initStripe({
       spacedAccordionItems: true,
     },
     paymentMethodOrder: ["card"],
-  };
 
-  if (layoutType == "accordion") {
-    let paymentElementOptionsAccordion = {
-      layout: {
-        type: "accordion",
-        defaultCollapsed: false,
-        radios: true,
-        spacedAccordionItems: true,
-      },
-    };
-    paymentElementOptions = {
-      ...paymentElementOptions,
-      ...paymentElementOptionsAccordion,
-    };
-  }
+    // For accordion layout
+    layout: {
+      type: "accordion",
+      defaultCollapsed: false,
+      radios: true,
+      spacedAccordionItems: true,
+    },
+  };
 
   const paymentElement = elements.create("payment", paymentElementOptions);
   paymentElement.mount("#payment-element");
