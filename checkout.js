@@ -144,17 +144,9 @@ function initStripe({
       type: "accordion",
       defaultCollapsed: false,
       radios: true,
-      spacedAccordionItems: true,
+      spacedAccordionItems: false,
     },
     paymentMethodOrder: ["card"],
-
-    // For accordion layout
-    layout: {
-      type: "accordion",
-      defaultCollapsed: false,
-      radios: true,
-      spacedAccordionItems: true,
-    },
   };
 
   const paymentElement = elements.create("payment", paymentElementOptions);
@@ -251,7 +243,7 @@ async function handleConfirm() {
   if (window.nativeAPI) {
     reactNativePostMessage({
       eventName: "stripe.confirmationToken",
-      eventData: { id: confirmationToken.id },
+      eventData: { confirmationToken },
     });
   } else {
     //TODO Call checkout to create paymentIntent and return client secret
