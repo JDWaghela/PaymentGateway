@@ -211,7 +211,7 @@ async function handleSubmit(e) {
   window.confirmationToken = confirmationToken;
 
   setLoading(false);
-  document.getElementById("payment-element").classList.add("hidden");
+  document.querySelector("#payment-element").classList.add("hidden");
   document.querySelector("#payment-collection-notice").classList.add("hidden");
   document.querySelector("#submit").classList.add("hidden");
   document.querySelector("#confirm").classList.remove("hidden");
