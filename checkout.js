@@ -160,6 +160,9 @@ function initStripe({
   const paymentElement = elements.create("payment", paymentElementOptions);
   paymentElement.mount("#payment-element");
   paymentElement.on("ready", () => {
+    document
+      .querySelector("#payment-collection-notice")
+      .classList.remove("hidden");
     document.querySelector("#submit").classList.remove("hidden");
   });
   setLoading(false);
@@ -209,6 +212,7 @@ async function handleSubmit(e) {
 
   showSummary(JSON.stringify(confirmationToken));
   setLoading(false);
+  document.querySelector("#payment-collection-notice").classList.add("hidden");
   document.querySelector("#submit").classList.add("hidden");
   document.querySelector("#confirm").classList.remove("hidden");
 }
@@ -332,6 +336,13 @@ function setLoading(isLoading) {
     document.querySelector("#button-text").classList.remove("hidden");
     document.querySelector("#button-confirm-text").classList.remove("hidden");
   }
+}
+
+function onClickCollectionNotice() {
+  reactNativePostMessage({
+    eventName: "payment-collection-notice",
+    eventData: {},
+  });
 }
 
 function reactNativePostMessage(postData) {
