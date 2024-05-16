@@ -37,12 +37,18 @@ async function callAPI({ url, method, body }) {
 }
 
 // Fetches a payment intent and captures the client secret
-async function initialize(token, customerKey, layoutType, nativeAPI) {
+async function initialize({
+  token,
+  customerKey,
+  layoutType,
+  nativeAPI,
+  locale,
+}) {
   window.authorization = token;
 
   reactNativePostMessage({
     eventName: "initialize",
-    eventData: { token, customerKey, layoutType, nativeAPI },
+    eventData: { token, customerKey, layoutType, nativeAPI, locale },
   });
 
   const configResponse = await callAPI({
@@ -71,19 +77,26 @@ async function initialize(token, customerKey, layoutType, nativeAPI) {
 
   const { clientSecret } = customerResponse;
 
-  initStripe(publishableKey, clientSecret, layoutType, nativeAPI);
+  initStripe({ publishableKey, clientSecret, layoutType, nativeAPI, locale });
 }
 
-function initStripe(publishableKey, clientSecret, layoutType, nativeAPI) {
+function initStripe({
+  publishableKey,
+  clientSecret,
+  layoutType,
+  nativeAPI,
+  locale,
+}) {
   window.nativeAPI = nativeAPI;
 
   reactNativePostMessage({
     eventName: "initStripe",
-    eventData: { publishableKey, clientSecret, layoutType, nativeAPI },
+    eventData: { publishableKey, clientSecret, layoutType, nativeAPI, locale },
   });
 
   stripe = Stripe(publishableKey, {
     betas: ["elements_saved_payment_methods_beta_1"],
+    locale,
   });
 
   const options = {
