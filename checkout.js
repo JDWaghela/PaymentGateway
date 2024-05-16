@@ -210,7 +210,6 @@ async function handleSubmit(e) {
 
   window.confirmationToken = confirmationToken;
 
-  showSummary(JSON.stringify(confirmationToken));
   setLoading(false);
   document.querySelector("#payment-collection-notice").classList.add("hidden");
   document.querySelector("#submit").classList.add("hidden");
@@ -267,7 +266,6 @@ async function checkStatus(paymentResponse) {
 
   switch (paymentResponse?.status) {
     case "requires_capture":
-      showSummary(JSON.stringify(paymentResponse));
       document.getElementById("confirm").classList.add("hidden");
       showMessage("Payment succeeded!");
       break;
@@ -300,19 +298,6 @@ function showMessage(messageText) {
   }, 10000);
 }
 
-function showSummary(last4digits) {
-  const summaryContainer = document.querySelector("#summary");
-  summaryContainer.classList.remove("hidden");
-  summaryContainer.textContent = last4digits;
-
-  document.getElementById("payment-element").classList.add("hidden");
-
-  setTimeout(function () {
-    summaryContainer.classList.add("hidden");
-    summaryContainer.textContent = "";
-  }, 10000);
-}
-
 // Show a spinner on payment submission
 function setLoading(isLoading) {
   reactNativePostMessage({
@@ -340,7 +325,7 @@ function setLoading(isLoading) {
 
 function onClickCollectionNotice() {
   reactNativePostMessage({
-    eventName: "payment-collection-notice",
+    eventName: "stripe.collectionNotice",
     eventData: {},
   });
 }
