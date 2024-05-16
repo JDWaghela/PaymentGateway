@@ -168,6 +168,34 @@ function initStripe({
   setLoading(false);
 }
 
+async function getConfirmationToken() {
+  const { error: submitError } = await elements.submit();
+  if (submitError) {
+    showMessage(submitError);
+    setLoading(false);
+    return;
+  }
+
+  const { error, confirmationToken } = await stripe.createConfirmationToken({
+    elements,
+    params: {
+      payment_method_data: {
+        billing_details: {
+          address: {
+            country: null,
+            postal_code: null,
+          },
+        },
+      },
+    },
+  });
+
+  reactNativePostMessage({
+    eventName: "stripe.confirmationToken",
+    eventData: { error, confirmationToken },
+  });
+}
+
 async function handleSubmit(e) {
   e.preventDefault();
   setLoading(true);
