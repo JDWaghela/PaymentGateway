@@ -126,7 +126,7 @@ function initStripe({
   });
 
   const missingOptions = [];
-  if (publishableKey !== undefined) {
+  if (stripe?.publishableKey !== undefined) {
     missingOptions.push("stripe.publishableKey");
   }
   if (stripe?.options?.locale !== undefined) {
