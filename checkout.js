@@ -10,12 +10,24 @@ let stripe;
 // });
 
 // initStripe({
-//   publishableKey: "",
-//   clientSecret: "",
 //   nativeAPI: false,
-//   locale: "en",
-//   amount: 2500,
-//   currency: "usd",
+//   showWebComponents: false,
+//   stripe: {
+//     publishableKey: "",
+//     options: {
+//       locale: "en",
+//     },
+//     elementOptions: {
+//       customerSessionClientSecret: "",
+//       amount: 2500,
+//       currency: "usd",
+//     },
+//     paymentElementOptions: {
+//       savePaymentMethod: {
+//         maxVisiblePaymentMethods: 4,
+//       },
+//     },
+//   },
 // });
 
 document
@@ -76,24 +88,30 @@ async function initialize({ token, customerKey, locale, amount, currency }) {
   const { clientSecret } = customerResponse;
 
   initStripe({
-    publishableKey,
-    clientSecret,
     nativeAPI: false,
-    locale,
-    amount,
-    currency,
+    stripe: {
+      publishableKey,
+      options: {
+        locale: locale,
+      },
+      elementOptions: {
+        customerSessionClientSecret: clientSecret,
+        amount: amount,
+        currency: currency,
+      },
+      paymentElementOptions: {
+        savePaymentMethod: {
+          maxVisiblePaymentMethods: 4,
+        },
+      },
+    },
   });
 }
 
 function initStripe({
-  publishableKey,
-  clientSecret,
-  locale,
-  nativeAPI = true,
-  amount,
-  currency,
-  fontSizeBase = 1,
   showWebComponents = true,
+  nativeAPI = true,
+  stripe = {},
 }) {
   window.nativeAPI = nativeAPI;
   window.showWebComponents = showWebComponents;
@@ -101,43 +119,44 @@ function initStripe({
   reactNativePostMessage({
     eventName: "initStripe",
     eventData: {
-      publishableKey,
-      clientSecret,
       nativeAPI,
-      locale,
-      amount,
-      currency,
       showWebComponents,
+      stripe,
     },
   });
 
-  stripe = Stripe(publishableKey, {
-    betas: ["elements_saved_payment_methods_beta_1"],
-    locale,
-  });
+  const missingOptions = [];
+  if (publishableKey !== undefined) {
+    missingOptions.push("stripe.publishableKey");
+  }
+  if (stripe?.options?.locale !== undefined) {
+    missingOptions.push("stripe.options.locale");
+  }
+  if (stripe?.elementOptions?.customerSessionClientSecret !== undefined) {
+    missingOptions.push("stripe.elementOptions.customerSessionClientSecret");
+  }
+  if (stripe?.elementOptions?.amount !== undefined) {
+    missingOptions.push("stripe.elementOptions.amount");
+  }
+  if (stripe?.elementOptions?.currency !== undefined) {
+    missingOptions.push("stripe.elementOptions.currency");
+  }
 
-  const appearance = {
-    theme: "stripe",
+  if (missingOptions?.length > 0) {
+    reactNativePostMessage({
+      eventName: "stripe.configuration.error",
+      eventData: {
+        message: "Stripe configuration fields are missing.",
+        options: missingOptions,
+      },
+    });
+    return;
+  }
 
-    variables: {
-      fontSizeBase: `${fontSizeBase}rem`,
-      // colorPrimary: "#0570de",
-      // colorBackground: "#F3F5F6",
-      // colorText: "#30313d",
-      // colorDanger: "#df1b41",
-      // fontFamily: "Ideal Sans, system-ui, sans-serif",
-      // spacingUnit: "2px",
-      // borderRadius: "4px",
-      // See all possible variables below
-    },
-  };
+  stripe = Stripe(stripe?.publishableKey, stripe?.options);
 
   const options = {
-    appearance,
-    customerSessionClientSecret: clientSecret,
     mode: "payment",
-    amount: amount,
-    currency: currency,
     payment_method_types: ["card"],
     captureMethod: "manual",
     paymentMethodCreation: "manual",
@@ -146,6 +165,7 @@ function initStripe({
         require_cvc_recollection: true,
       },
     },
+    ...stripe?.elementOptions,
   };
 
   elements = stripe.elements(options);
@@ -168,9 +188,11 @@ function initStripe({
       spacedAccordionItems: false,
     },
     paymentMethodOrder: ["card"],
+    ...stripe?.paymentElementOptions,
   };
 
   const paymentElement = elements.create("payment", paymentElementOptions);
+
   paymentElement.mount("#payment-element");
   paymentElement.on("ready", function (_event) {
     reactNativePostMessage({
