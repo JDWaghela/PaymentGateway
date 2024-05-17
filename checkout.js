@@ -126,19 +126,19 @@ function initStripe({
   });
 
   const missingOptions = [];
-  if (stripe?.publishableKey !== undefined) {
+  if (stripe?.publishableKey === undefined) {
     missingOptions.push("stripe.publishableKey");
   }
-  if (stripe?.options?.locale !== undefined) {
+  if (stripe?.options?.locale === undefined) {
     missingOptions.push("stripe.options.locale");
   }
-  if (stripe?.elementOptions?.customerSessionClientSecret !== undefined) {
+  if (stripe?.elementOptions?.customerSessionClientSecret === undefined) {
     missingOptions.push("stripe.elementOptions.customerSessionClientSecret");
   }
-  if (stripe?.elementOptions?.amount !== undefined) {
+  if (stripe?.elementOptions?.amount === undefined) {
     missingOptions.push("stripe.elementOptions.amount");
   }
-  if (stripe?.elementOptions?.currency !== undefined) {
+  if (stripe?.elementOptions?.currency === undefined) {
     missingOptions.push("stripe.elementOptions.currency");
   }
 
