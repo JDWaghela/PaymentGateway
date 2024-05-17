@@ -92,9 +92,10 @@ function initStripe({
   nativeAPI = true,
   amount,
   currency,
-  showWebButtons = true,
+  showWebComponents = true,
 }) {
   window.nativeAPI = nativeAPI;
+  window.showWebComponents = showWebComponents;
 
   reactNativePostMessage({
     eventName: "initStripe",
@@ -105,6 +106,7 @@ function initStripe({
       locale,
       amount,
       currency,
+      showWebComponents,
     },
   });
 
@@ -175,7 +177,7 @@ function initStripe({
         height: document.querySelector("#payment-element").scrollHeight,
       },
     });
-    if (showWebButtons) {
+    if (showWebComponents) {
       document
         .querySelector("#payment-collection-notice")
         .classList.remove("hidden");
@@ -189,6 +191,10 @@ async function getConfirmationToken() {
   setLoading(true);
   const { error: submitError } = await elements.submit();
   if (submitError) {
+    reactNativePostMessage({
+      eventName: "stripe.submitError",
+      eventData: submitError,
+    });
     showMessage(submitError);
     setLoading(false);
     return;
@@ -265,7 +271,7 @@ async function handleSubmit(e) {
 }
 
 async function handleConfirm() {
-  confirmationToken = window.confirmationToken;
+  let confirmationToken = window.confirmationToken;
 
   if (window.nativeAPI) {
     reactNativePostMessage({
@@ -335,15 +341,17 @@ async function checkStatus(paymentResponse) {
 // ------- UI helpers -------
 
 function showMessage(messageText) {
-  const messageContainer = document.querySelector("#payment-message");
+  if (window.showWebComponents) {
+    const messageContainer = document.querySelector("#payment-message");
 
-  messageContainer.classList.remove("hidden");
-  messageContainer.textContent = messageText;
+    messageContainer.classList.remove("hidden");
+    messageContainer.textContent = messageText;
 
-  setTimeout(function () {
-    messageContainer.classList.add("hidden");
-    messageContainer.textContent = "";
-  }, 10000);
+    setTimeout(function () {
+      messageContainer.classList.add("hidden");
+      messageContainer.textContent = "";
+    }, 10000);
+  }
 }
 
 // Show a spinner on payment submission
