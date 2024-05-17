@@ -92,6 +92,7 @@ function initStripe({
   nativeAPI = true,
   amount,
   currency,
+  fontSizeBase = 1,
   showWebComponents = true,
 }) {
   window.nativeAPI = nativeAPI;
@@ -119,6 +120,7 @@ function initStripe({
     theme: "stripe",
 
     variables: {
+      fontSizeBase: `${fontSizeBase}rem`,
       // colorPrimary: "#0570de",
       // colorBackground: "#F3F5F6",
       // colorText: "#30313d",
