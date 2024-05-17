@@ -168,21 +168,23 @@ function initStripe({
 
   const paymentElement = elements.create("payment", paymentElementOptions);
   paymentElement.mount("#payment-element");
-  paymentElement.on("ready", () => {
-    reactNativePostMessage({
-      eventName: "scrollHeight",
-      eventData: {
-        height: document.querySelector("#payment-element").scrollHeight,
-      },
-    });
-    if (showWebButtons) {
-      document
-        .querySelector("#payment-collection-notice")
-        .classList.remove("hidden");
-      document.querySelector("#submit").classList.remove("hidden");
-    }
-  });
+  paymentElement.on("ready", onMountPaymentElement);
   setLoading(false);
+}
+
+function onMountPaymentElement() {
+  reactNativePostMessage({
+    eventName: "scrollHeight",
+    eventData: {
+      height: document.querySelector("#payment-element").scrollHeight,
+    },
+  });
+  if (showWebButtons) {
+    document
+      .querySelector("#payment-collection-notice")
+      .classList.remove("hidden");
+    document.querySelector("#submit").classList.remove("hidden");
+  }
 }
 
 async function getConfirmationToken() {
