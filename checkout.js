@@ -168,7 +168,7 @@ function initStripe({
 
   const paymentElement = elements.create("payment", paymentElementOptions);
   paymentElement.mount("#payment-element");
-  paymentElement.on("ready", function (event) {
+  paymentElement.on("ready", function (_event) {
     reactNativePostMessage({
       eventName: "scrollHeight",
       eventData: {
@@ -181,8 +181,8 @@ function initStripe({
         .classList.remove("hidden");
       document.querySelector("#submit").classList.remove("hidden");
     }
+    setLoading(false);
   });
-  setLoading(false);
 }
 
 async function getConfirmationToken() {
