@@ -180,6 +180,7 @@ function initStripe({
 }
 
 async function getConfirmationToken() {
+  setLoading(true);
   const { error: submitError } = await elements.submit();
   if (submitError) {
     showMessage(submitError);
@@ -201,6 +202,7 @@ async function getConfirmationToken() {
     },
   });
 
+  setLoading(false);
   reactNativePostMessage({
     eventName: "stripe.confirmationToken",
     eventData: { error, confirmationToken },
