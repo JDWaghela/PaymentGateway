@@ -138,7 +138,7 @@ function initStripe({
     eventData: {
       nativeAPI,
       showWebComponents,
-      stripe,
+      stripe : stripeObj,
     },
   });
 
