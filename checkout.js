@@ -10,19 +10,36 @@ let stripe;
 // });
 
 // initStripe({
-//   nativeAPI: false,
+//   nativeAPI: true,
 //   showWebComponents: false,
 //   stripe: {
-//     publishableKey: "",
+//     publishableKey:
+//       "pk_test_51OoobQIhoMYCIMJxfjMZbjAVCicWGVevZPZpVVgdj0mzPkoJdRjL4gwizPOgpyflDPk78YNBuevOUZSS3egQy5AM00fluM6aqb",
 //     options: {
+//       betas: ["elements_saved_payment_methods_beta_1"],
 //       locale: "en",
 //     },
 //     elementOptions: {
-//       customerSessionClientSecret: "",
+//       appearance: {
+//         theme: "stripe",
+//         variables: {
+//           fontSizeBase: "1rem",
+//         },
+//         rules: {
+//           ".AccordionItem": {
+//             fontSize: "18px",
+//           },
+//           ".Label": {
+//             fontSize: "16px",
+//           },
+//         },
+//       },
+//       customerSessionClientSecret:
+//         "cuss_secret_Q7tBuCiENjNApfNli76eXgJxWP0koCxw7Fcq2W7YI4M33Kq",
 //       amount: 2500,
-//       currency: "usd",
+//       currency: "nzd",
 //     },
-//     paymentElementOptions: {
+//     paymentElementsOptions: {
 //       savePaymentMethod: {
 //         maxVisiblePaymentMethods: 4,
 //       },
@@ -111,7 +128,7 @@ async function initialize({ token, customerKey, locale, amount, currency }) {
 function initStripe({
   showWebComponents = true,
   nativeAPI = true,
-  stripe = {},
+  stripe: stripeObj = {},
 }) {
   window.nativeAPI = nativeAPI;
   window.showWebComponents = showWebComponents;
@@ -126,23 +143,24 @@ function initStripe({
   });
 
   const missingOptions = [];
-  if (stripe?.publishableKey === undefined) {
+  if (stripeObj?.publishableKey === undefined) {
     missingOptions.push("stripe.publishableKey");
   }
-  if (stripe?.options?.locale === undefined) {
+  if (stripeObj?.options?.locale === undefined) {
     missingOptions.push("stripe.options.locale");
   }
-  if (stripe?.elementOptions?.customerSessionClientSecret === undefined) {
+  if (stripeObj?.elementOptions?.customerSessionClientSecret === undefined) {
     missingOptions.push("stripe.elementOptions.customerSessionClientSecret");
   }
-  if (stripe?.elementOptions?.amount === undefined) {
+  if (stripeObj?.elementOptions?.amount === undefined) {
     missingOptions.push("stripe.elementOptions.amount");
   }
-  if (stripe?.elementOptions?.currency === undefined) {
+  if (stripeObj?.elementOptions?.currency === undefined) {
     missingOptions.push("stripe.elementOptions.currency");
   }
 
   if (missingOptions?.length > 0) {
+    setLoading(false);
     reactNativePostMessage({
       eventName: "stripe.configuration.error",
       eventData: {
@@ -153,7 +171,7 @@ function initStripe({
     return;
   }
 
-  stripe = Stripe(stripe?.publishableKey, stripe?.options);
+  stripe = Stripe(stripeObj?.publishableKey, stripeObj?.options);
 
   const options = {
     mode: "payment",
@@ -165,7 +183,7 @@ function initStripe({
         require_cvc_recollection: true,
       },
     },
-    ...stripe?.elementOptions,
+    ...stripeObj?.elementOptions,
   };
 
   elements = stripe.elements(options);
@@ -188,7 +206,7 @@ function initStripe({
       spacedAccordionItems: false,
     },
     paymentMethodOrder: ["card"],
-    ...stripe?.paymentElementOptions,
+    ...stripeObj?.paymentElementOptions,
   };
 
   const paymentElement = elements.create("payment", paymentElementOptions);
