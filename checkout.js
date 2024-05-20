@@ -214,7 +214,7 @@ function initStripe({
     paymentElement.mount("#payment-element");
     paymentElement.on("ready", function (_event) {
       reactNativePostMessage({
-        eventName: "scrollHeight",
+        eventName: "stripe.scrollHeight",
         eventData: {
           height: document.querySelector("#payment-element").scrollHeight,
         },
@@ -269,10 +269,17 @@ async function getConfirmationToken() {
     });
 
     setLoading(false);
-    reactNativePostMessage({
-      eventName: "stripe.confirmationToken",
-      eventData: { error, confirmationToken },
-    });
+    if (error) {
+      reactNativePostMessage({
+        eventName: "stripe.confirmationToken.error",
+        eventData: { error: error?.message },
+      });
+    } else {
+      reactNativePostMessage({
+        eventName: "stripe.confirmationToken",
+        eventData: { confirmationToken },
+      });
+    }
   } catch (error) {
     setLoading(false);
     reactNativePostMessage({
