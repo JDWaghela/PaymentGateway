@@ -130,137 +130,158 @@ function initStripe({
   nativeAPI = true,
   stripe: stripeObj = {},
 }) {
-  window.nativeAPI = nativeAPI;
-  window.showWebComponents = showWebComponents;
+  try {
+    window.nativeAPI = nativeAPI;
+    window.showWebComponents = showWebComponents;
 
-  reactNativePostMessage({
-    eventName: "initStripe",
-    eventData: {
-      nativeAPI,
-      showWebComponents,
-      stripe : stripeObj,
-    },
-  });
+    reactNativePostMessage({
+      eventName: "initStripe",
+      eventData: {
+        nativeAPI,
+        showWebComponents,
+        stripe: stripeObj,
+      },
+    });
 
-  const missingOptions = [];
-  if (stripeObj?.publishableKey === undefined) {
-    missingOptions.push("stripe.publishableKey");
-  }
-  if (stripeObj?.options?.locale === undefined) {
-    missingOptions.push("stripe.options.locale");
-  }
-  if (stripeObj?.elementOptions?.customerSessionClientSecret === undefined) {
-    missingOptions.push("stripe.elementOptions.customerSessionClientSecret");
-  }
-  if (stripeObj?.elementOptions?.amount === undefined) {
-    missingOptions.push("stripe.elementOptions.amount");
-  }
-  if (stripeObj?.elementOptions?.currency === undefined) {
-    missingOptions.push("stripe.elementOptions.currency");
-  }
+    const missingOptions = [];
+    if (stripeObj?.publishableKey === undefined) {
+      missingOptions.push("stripe.publishableKey");
+    }
+    if (stripeObj?.options?.locale === undefined) {
+      missingOptions.push("stripe.options.locale");
+    }
+    if (stripeObj?.elementOptions?.customerSessionClientSecret === undefined) {
+      missingOptions.push("stripe.elementOptions.customerSessionClientSecret");
+    }
+    if (stripeObj?.elementOptions?.amount === undefined) {
+      missingOptions.push("stripe.elementOptions.amount");
+    }
+    if (stripeObj?.elementOptions?.currency === undefined) {
+      missingOptions.push("stripe.elementOptions.currency");
+    }
 
-  if (missingOptions?.length > 0) {
+    if (missingOptions?.length > 0) {
+      setLoading(false);
+      reactNativePostMessage({
+        eventName: "stripe.configuration.error",
+        eventData: {
+          message: "Stripe configuration fields are missing.",
+          options: missingOptions,
+        },
+      });
+      return;
+    }
+    stripe = Stripe(stripeObj?.publishableKey, stripeObj?.options);
+
+    const options = {
+      mode: "payment",
+      payment_method_types: ["card"],
+      captureMethod: "manual",
+      paymentMethodCreation: "manual",
+      paymentMethodOptions: {
+        card: {
+          require_cvc_recollection: true,
+        },
+      },
+      ...stripeObj?.elementOptions,
+    };
+
+    elements = stripe.elements(options);
+    let paymentElementOptions = {
+      fields: {
+        billingDetails: {
+          address: {
+            country: "never",
+            postalCode: "never",
+          },
+        },
+      },
+      savePaymentMethod: {
+        maxVisiblePaymentMethods: 3,
+      },
+      layout: {
+        type: "accordion",
+        defaultCollapsed: false,
+        radios: false,
+        spacedAccordionItems: false,
+      },
+      paymentMethodOrder: ["card"],
+      ...stripeObj?.paymentElementOptions,
+    };
+
+    const paymentElement = elements.create("payment", paymentElementOptions);
+
+    paymentElement.mount("#payment-element");
+    paymentElement.on("ready", function (_event) {
+      reactNativePostMessage({
+        eventName: "scrollHeight",
+        eventData: {
+          height: document.querySelector("#payment-element").scrollHeight,
+        },
+      });
+      if (showWebComponents) {
+        document
+          .querySelector("#payment-collection-notice")
+          .classList.remove("hidden");
+        document.querySelector("#submit").classList.remove("hidden");
+      }
+      setLoading(false);
+    });
+  } catch (error) {
     setLoading(false);
     reactNativePostMessage({
       eventName: "stripe.configuration.error",
       eventData: {
-        message: "Stripe configuration fields are missing.",
-        options: missingOptions,
+        error: error?.message,
       },
     });
-    return;
   }
-
-  stripe = Stripe(stripeObj?.publishableKey, stripeObj?.options);
-
-  const options = {
-    mode: "payment",
-    payment_method_types: ["card"],
-    captureMethod: "manual",
-    paymentMethodCreation: "manual",
-    paymentMethodOptions: {
-      card: {
-        require_cvc_recollection: true,
-      },
-    },
-    ...stripeObj?.elementOptions,
-  };
-
-  elements = stripe.elements(options);
-  let paymentElementOptions = {
-    fields: {
-      billingDetails: {
-        address: {
-          country: "never",
-          postalCode: "never",
-        },
-      },
-    },
-    savePaymentMethod: {
-      maxVisiblePaymentMethods: 3,
-    },
-    layout: {
-      type: "accordion",
-      defaultCollapsed: false,
-      radios: false,
-      spacedAccordionItems: false,
-    },
-    paymentMethodOrder: ["card"],
-    ...stripeObj?.paymentElementOptions,
-  };
-
-  const paymentElement = elements.create("payment", paymentElementOptions);
-
-  paymentElement.mount("#payment-element");
-  paymentElement.on("ready", function (_event) {
-    reactNativePostMessage({
-      eventName: "scrollHeight",
-      eventData: {
-        height: document.querySelector("#payment-element").scrollHeight,
-      },
-    });
-    if (showWebComponents) {
-      document
-        .querySelector("#payment-collection-notice")
-        .classList.remove("hidden");
-      document.querySelector("#submit").classList.remove("hidden");
-    }
-    setLoading(false);
-  });
 }
 
 async function getConfirmationToken() {
-  setLoading(true);
-  const { error: submitError } = await elements.submit();
-  if (submitError) {
-    reactNativePostMessage({
-      eventName: "stripe.submitError",
-      eventData: submitError,
-    });
-    showMessage(submitError);
-    setLoading(false);
-    return;
-  }
+  try {
+    setLoading(true);
+    const { error: submitError } = await elements.submit();
+    if (submitError) {
+      reactNativePostMessage({
+        eventName: "stripe.submit.error",
+        eventData: {
+          error: submitError?.message,
+        },
+      });
+      showMessage(submitError);
+      setLoading(false);
+      return;
+    }
 
-  const { error, confirmationToken } = await stripe.createConfirmationToken({
-    elements,
-    params: {
-      payment_method_data: {
-        billing_details: {
-          address: {
-            country: null,
-            postal_code: null,
+    const { error, confirmationToken } = await stripe.createConfirmationToken({
+      elements,
+      params: {
+        payment_method_data: {
+          billing_details: {
+            address: {
+              country: null,
+              postal_code: null,
+            },
           },
         },
       },
-    },
-  });
+    });
 
-  setLoading(false);
-  reactNativePostMessage({
-    eventName: "stripe.confirmationToken",
-    eventData: { error, confirmationToken },
-  });
+    setLoading(false);
+    reactNativePostMessage({
+      eventName: "stripe.confirmationToken",
+      eventData: { error, confirmationToken },
+    });
+  } catch (error) {
+    setLoading(false);
+    reactNativePostMessage({
+      eventName: "stripe.confirmationToken.error",
+      eventData: {
+        error: error?.message,
+      },
+    });
+  }
 }
 
 async function handleSubmit(e) {
@@ -274,6 +295,10 @@ async function handleSubmit(e) {
   const { error: submitError } = await elements.submit();
   if (submitError) {
     showMessage(submitError);
+    reactNativePostMessage({
+      eventName: "stripe.submit.error",
+      eventData: { error: submitError?.message },
+    });
     setLoading(false);
     return;
   }
@@ -296,8 +321,8 @@ async function handleSubmit(e) {
     // This point is only reached if there's an immediate error when
     // creating the ConfirmationToken. Show the error to your customer (for example, payment details incomplete)
     reactNativePostMessage({
-      eventName: "stripe.confirmationToken",
-      eventData: { error },
+      eventName: "stripe.confirmationToken.error",
+      eventData: { error: error?.message },
     });
     setLoading(false);
     return;
