@@ -72,6 +72,7 @@ async function callAPI({ url, method, body }) {
 // Fetches a payment intent and captures the client secret
 async function initialize({ token, customerKey, locale, amount, currency }) {
   window.authorization = token;
+  window.amount = amount;
 
   reactNativePostMessage({
     eventName: "initialize",
@@ -238,22 +239,46 @@ function initStripe({
   }
 }
 
-async function getConfirmationToken() {
+async function validateElements() {
   try {
-    setLoading(true);
     const { error: submitError } = await elements.submit();
+    const resultData = {
+      result: submitError?.message ? false : true,
+      error: submitError?.message,
+    };
     if (submitError) {
       reactNativePostMessage({
-        eventName: "stripe.submit.error",
-        eventData: {
-          error: submitError?.message,
-        },
+        eventName: "stripe.submit",
+        eventData: resultData,
       });
       showMessage(submitError);
       setLoading(false);
-      return;
+      return resultData;
+    } else {
+      reactNativePostMessage({
+        eventName: "stripe.submit",
+        eventData: resultData,
+      });
+      return resultData;
     }
+  } catch (error) {
+    const resultData = {
+      result: false,
+      error: error?.message,
+    };
+    reactNativePostMessage({
+      eventName: "stripe.submit",
+      eventData: resultData,
+    });
+    showMessage(error);
+    setLoading(false);
+    return resultData;
+  }
+}
 
+async function getConfirmationToken() {
+  try {
+    setLoading(true);
     const { error, confirmationToken } = await stripe.createConfirmationToken({
       elements,
       params: {
@@ -299,14 +324,9 @@ async function handleSubmit(e) {
     return handleConfirm();
   }
 
-  const { error: submitError } = await elements.submit();
-  if (submitError) {
-    showMessage(submitError);
-    reactNativePostMessage({
-      eventName: "stripe.submit.error",
-      eventData: { error: submitError?.message },
-    });
-    setLoading(false);
+  const isValid = await validateElements();
+
+  if (!isValid) {
     return;
   }
 
@@ -356,7 +376,7 @@ async function handleConfirm() {
     //TODO Call checkout to create paymentIntent and return client secret
     const chargeObj = {
       customerId: "cus_PwnJsViElBR9Ck",
-      totalAmount: 2500,
+      totalAmount: window.amount,
       paymentMethodType: "card",
       currency: "usd",
       captureFunds: true,
