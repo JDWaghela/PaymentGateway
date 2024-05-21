@@ -13,8 +13,7 @@ let stripe;
 //   nativeAPI: true,
 //   showWebComponents: false,
 //   stripe: {
-//     publishableKey:
-//       "pk_test_51OoobQIhoMYCIMJxfjMZbjAVCicWGVevZPZpVVgdj0mzPkoJdRjL4gwizPOgpyflDPk78YNBuevOUZSS3egQy5AM00fluM6aqb",
+//     publishableKey: "",
 //     options: {
 //       betas: ["elements_saved_payment_methods_beta_1"],
 //       locale: "en",
@@ -34,8 +33,7 @@ let stripe;
 //           },
 //         },
 //       },
-//       customerSessionClientSecret:
-//         "cuss_secret_Q7tBuCiENjNApfNli76eXgJxWP0koCxw7Fcq2W7YI4M33Kq",
+//       customerSessionClientSecret: "",
 //       amount: 2500,
 //       currency: "nzd",
 //     },
@@ -58,6 +56,7 @@ async function callAPI({ url, method, body }) {
   const headers = {
     "Content-Type": "application/json",
     Authorization: window.authorization,
+    country: window.country,
   };
 
   return await fetch(`https://apim-na.dev.mypepsico.com/cgf/gpg/v1/${url}`, {
@@ -70,8 +69,16 @@ async function callAPI({ url, method, body }) {
 }
 
 // Fetches a payment intent and captures the client secret
-async function initialize({ token, customerKey, locale, amount, currency }) {
+async function initialize({
+  token,
+  country,
+  customerKey,
+  locale,
+  amount,
+  currency,
+}) {
   window.authorization = token;
+  window.country = country;
   window.amount = amount;
 
   reactNativePostMessage({
@@ -221,9 +228,6 @@ function initStripe({
         },
       });
       if (showWebComponents) {
-        document
-          .querySelector("#payment-collection-notice")
-          .classList.remove("hidden");
         document.querySelector("#submit").classList.remove("hidden");
       }
       setLoading(false);
@@ -359,7 +363,6 @@ async function handleSubmit(e) {
 
   setLoading(false);
   document.querySelector("#payment-element").classList.add("hidden");
-  document.querySelector("#payment-collection-notice").classList.add("hidden");
   document.querySelector("#submit").classList.add("hidden");
   document.querySelector("#confirm").classList.remove("hidden");
 }
@@ -471,13 +474,6 @@ function setLoading(isLoading) {
     document.querySelector("#button-text").classList.remove("hidden");
     document.querySelector("#button-confirm-text").classList.remove("hidden");
   }
-}
-
-function onClickCollectionNotice() {
-  reactNativePostMessage({
-    eventName: "stripe.collectionNotice",
-    eventData: {},
-  });
 }
 
 function reactNativePostMessage(postData) {
