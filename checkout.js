@@ -183,7 +183,6 @@ function initStripe({
           require_cvc_recollection: true,
         },
       },
-      allowedCardBrands : ['visa', 'mastercard'],
       ...stripeObj?.elementOptions,
     };
 
