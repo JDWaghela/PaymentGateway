@@ -13,7 +13,13 @@ function initStripe({ stripe: stripeObj = {} }) {
     if (stripeObj?.elementOptions?.customerSessionClientSecret === undefined) {
       missingOptions.push("stripe.elementOptions.customerSessionClientSecret");
     }
-    if (stripeObj?.elementOptions?.amount === undefined) {
+    let hasOptionalAmountBetas = stripeObj?.options?.betas?.includes(
+      "deferred_intent_pe_optional_amount_beta_0"
+    );
+    if (
+      !hasOptionalAmountBetas &&
+      stripeObj?.elementOptions?.amount === undefined
+    ) {
       missingOptions.push("stripe.elementOptions.amount");
     }
     if (stripeObj?.elementOptions?.currency === undefined) {
