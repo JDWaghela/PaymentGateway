@@ -1,40 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1.0"
-    />
-    <!-- <link rel="stylesheet" href="checkout.css" /> -->
-    <!-- <script src="https://js.stripe.com/v3/"></script> -->
-    <!-- <script src="checkout.js" defer></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/ua-parser-js/dist/ua-parser.min.js"></script>
-    <script>
-      function uaParser() {
-        var parser = new UAParser();
-        alert(JSON.stringify(parser.getResult()));
-      }
-    </script>
-  </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <link rel="stylesheet" href="checkout.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="checkout.js" defer></script>
+</head>
 
-  <body>
-    <!-- <form id="payment-form"> -->
-    <!-- <div id="payment-element"> -->
-    <!--Stripe.js injects the Payment Element-->
-    <!-- </div> -->
-    <!-- </form> -->
-    <h1>Line Application</h1>
+<body>
+    <form id="payment-form">
+        <div id="payment-element">
+            <!--Stripe.js injects the Payment Element-->
+        </div>
+    </form>
+</body>
 
-    <button
-      type="button"
-      onclick="window.open('https://line.me/R/oaMessage/@partnerplus', '_blank')"
-    >
-      Click Me! To Open Line
-    </button>
-    <button type="button" onclick="alert(JSON.stringify(navigator.userAgent))">
-      userAgent
-    </button>
-    <button type="button" onclick="uaParser()">UA Parser</button>
-  </body>
 </html>
