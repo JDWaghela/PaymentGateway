@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1.0"
+    />
     <link rel="stylesheet" href="checkout.css" />
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="checkout.js" defer></script>
-</head>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
 
-<body>
+  <body>
     <form id="payment-form">
-        <div id="payment-element">
-            <!--Stripe.js injects the Payment Element-->
-        </div>
+      <div id="payment-element">
+        <!--Stripe.js injects the Payment Element-->
+      </div>
+      <button id="submit" type="button" onclick="getConfirmationToken()">
+        Submit Payment
+      </button>
     </form>
-</body>
-
+  </body>
 </html>
