@@ -1,6 +1,8 @@
 let elements;
 let stripe;
 
+document.querySelector("#submit").classList.add("hidden");
+
 function initStripe({ stripe: stripeObj = {} }) {
   try {
     const missingOptions = [];
@@ -70,6 +72,7 @@ function initStripe({ stripe: stripeObj = {} }) {
 
     paymentElement.mount("#payment-element");
     paymentElement.on("ready", function (_event) {
+      document.querySelector("#submit").classList.remove("hidden");
       reactNativePostMessage({
         eventName: "stripe.event.ready",
         eventData: {
@@ -131,8 +134,26 @@ async function validateElements() {
   }
 }
 
-async function getConfirmationToken(params = {}) {
+async function getConfirmationToken(_params = {}) {
   try {
+    await validateElements();
+    const params = {
+      payment_method_data: {
+        billing_details: {
+          name: "Test",
+          email: "",
+          phone: "",
+          address: {
+            city: "",
+            country: "NZ",
+            line1: "",
+            line2: "",
+            postal_code: "",
+            state: "",
+          },
+        },
+      },
+    };
     const confirmationTokenResult = await stripe.createConfirmationToken({
       elements,
       params,
@@ -163,5 +184,7 @@ function reactNativePostMessage(postData) {
   let isMobileDevice = regexp.test(details);
   if (isMobileDevice) {
     window.ReactNativeWebView.postMessage(JSON.stringify(postData));
+  } else {
+    console.log(postData);
   }
 }
