@@ -5,8 +5,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0;
-  background-color: #f3f5f6;
+  margin:0;
+  background-color: #F3F5F6;
 }
 
 form {
@@ -16,35 +16,11 @@ form {
 }
 
 pre {
-  white-space: pre-wrap;
-  white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
-  white-space: -o-pre-wrap;
-  word-wrap: break-word;
-}
-
-.hidden {
-  display: none;
-}
-
-#payment-form {
-  flex-direction: column;
-  align-items: center;
-}
-
-button {
-  background-color: #0073da;
-  color: white;
-  width: 100%;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-button:hover {
-  background-color: #005bb5;
+ white-space: pre-wrap;
+ white-space: -moz-pre-wrap;
+ white-space: -pre-wrap;
+ white-space: -o-pre-wrap;
+ word-wrap: break-word;
 }
 
 @-webkit-keyframes loading {
